@@ -1,0 +1,30 @@
+{
+  "generator-ngx-rocket": {
+    "version": "7.0.1",
+    "props": {
+      "location": "path",
+      "strict": false,
+      "skipInstall": false,
+      "skipQuickstart": false,
+      "initGit": true,
+      "target": [
+        "web"
+      ],
+      "pwa": false,
+      "ui": "material",
+      "layout": "simple",
+      "auth": false,
+      "lazy": false,
+      "angulartics": false,
+      "tools": [
+        "prettier"
+      ],
+      "utility": [],
+      "appName": "frontend",
+      "projectName": "frontend",
+      "packageManager": "npm",
+      "mobile": [],
+      "desktop": []
+    }
+  }
+}

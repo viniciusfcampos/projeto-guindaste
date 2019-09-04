@@ -1,0 +1,15 @@
+<div class="container">
+    <div class="controle">
+        <header>
+            <h1>Projeto <span>Guindaste</span></h1>
+            <img src="./../assets/img/crane.png">
+        </header>
+        <div class="seletores">
+            <app-seletor label="Rotação" [minimo]="-180" [maximo]="180" [step]="2" unidade="º" (aoAlterarValor)="rotacaoAlterada($event)"></app-seletor>
+            <app-seletor label="Altura" [minimo]="0" [maximo]="100" unidade="%" (aoAlterarValor)="alturaAlterada($event)"></app-seletor>
+        </div>
+        <div class="acoes">
+            <button (click)="alterarAcionamento()" [color]="acionar ? 'primary' : ''" mat-raised-button>{{ acionar ? 'Desativar' : 'Ativar' }}</button>
+        </div>
+    </div>
+</div>

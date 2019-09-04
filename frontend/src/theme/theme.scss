@@ -1,0 +1,39 @@
+/*
+ * Global application theme.
+ * Framework overrides and customization goes here.
+ */
+
+// stylelint-disable-next-line selector-max-universal
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+.mat-slider {
+  .mat-slider-track-background,
+  &:hover .mat-slider-track-background,
+  .cdk-focused .mat-slider-track-background {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .mat-slider-min-value.mat-slider-thumb-label-showing.cdk-focused .mat-slider-thumb,
+  .mat-slider-min-value.mat-slider-thumb-label-showing.cdk-focused .mat-slider-thumb-label,
+  .mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb,
+  .mat-slider-min-value.mat-slider-thumb-label-showing .mat-slider-thumb-label {
+    background-color: #ff6e40;
+  }
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}

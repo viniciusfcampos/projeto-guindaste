@@ -1,0 +1,49 @@
+:host {
+  display: flex;
+  flex: 1;
+}
+
+.container {
+  background-image: linear-gradient(-10deg, #530505 51.2%, black 101.1%);
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  display: flex;
+  width: 100vw;
+
+  .controle {
+    box-shadow: 10px 6px 60px -4px rgba(0,0,0,0.75);
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 16px;
+    color: #fff;
+    padding: 40px;
+    width: 400px;
+
+    header {
+      margin-bottom: 48px;
+      text-align: center;
+
+      img {
+        width: 160px;
+      }
+
+      h1 {
+        margin-bottom: 48px;
+        font-weight: bold;
+        font-size: 24px;
+      }
+    }
+
+    .seletores {
+      margin-bottom: 32px;
+    }
+
+    .acoes {
+      text-align: center;
+
+      button {
+        width: 120px;
+      }
+    }
+  }
+}

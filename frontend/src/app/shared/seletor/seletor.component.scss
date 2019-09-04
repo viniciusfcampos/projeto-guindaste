@@ -1,0 +1,20 @@
+.seletor {
+    align-items: center;
+    display: flex;
+
+    label {
+        display: block;
+        width: 64px;
+    }
+    
+    mat-slider {
+        margin: 0 32px;
+        flex: 1;
+    }
+
+    .valor {
+        margin-bottom: -8px;
+        text-align: right;
+        width: 40px;
+    }
+}
