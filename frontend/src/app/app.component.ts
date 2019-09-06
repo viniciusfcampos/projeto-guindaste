@@ -1,4 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import {
+  HttpClient,
+  HttpParams,
+  HttpRequest,
+  HttpHeaders
+} from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -8,21 +14,23 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   public acionar = false;
 
-  constructor() {}
+  constructor(
+    private http: HttpClient,
+  ) {}
 
   ngOnInit() {
   }
 
   public rotacaoAlterada(valor: number) {
-    console.log('Rotação', valor);
+    this.http.post('rotacao', null, { params: { valor: valor.toString() } }).subscribe();
   }
-
+  
   public alturaAlterada(valor: number) {
-    console.log('Altura', valor);
+    this.http.post('altura', null, { params: { valor: valor.toString() } }).subscribe();
   }
-
+  
   public alterarAcionamento() {
     this.acionar = !this.acionar;
-    console.log('Ativar imã', this.acionar);
+    this.http.post('eletroima', null, { params: { acionar: this.acionar.toString() } }).subscribe();
   }
 }
