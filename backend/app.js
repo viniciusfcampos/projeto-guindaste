@@ -11,26 +11,33 @@ var serialService = new serialport(portName, {
     parser: new serialport.parsers.Readline('\r\n')
 });
 
-var formatarResposta = (codigo, numero) => codigo + ("0000" + numero).slice(-4);
+var formatarResposta = (acao, valor) => {
+  const valorAbsoluto = Math.abs(valor);
+  const sinal = valor < 0 ? 0x04 : 0x00;
+  const byteComando = sinal + acao;
+  return Buffer.from([byteComando, valorAbsoluto])
+};
 
-app.post('/rotacao', function (req, res) {
-  const rotacao = formatarResposta('R', req.query.valor);
+app.post('/rotacao', (req, res)  => {
+  const rotacao = formatarResposta(0x01, req.query.valor);
   serialService.write(rotacao);
   res.sendStatus(200);
 });
 
-app.post('/altura', function (req, res) {
-  const altura = formatarResposta('A', req.query.valor);
+app.post('/altura', (req, res)  => {
+  const altura = formatarResposta(0x02, req.query.valor);
   serialService.write(altura);
   res.sendStatus(200);
 });
 
-app.post('/eletroima', function (req, res) {
-  const eletroima = formatarResposta('E', req.query.acionar);
+app.post('/eletroima', (req, res)  => {
+  const eletroima = formatarResposta(0x03, req.query.acionar == 'true' ? 1 : 0);
   serialService.write(eletroima);
   res.sendStatus(200);
 });
 
-app.listen(8000, function () {
+app.listen(8000, ()  => {
   console.log('Servidor rodando na porta 8000.');
 });
+
+serialService.on('data', data => console.log(data.toString()));

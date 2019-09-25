@@ -29,6 +29,7 @@ export class SeletorComponent implements OnInit {
     }
     
     this.value = valor ? +valor.toFixed(0) : valor;
+    console.log('alterado');
     this.aoAlterarValor.emit(this.value);
   }
 }
