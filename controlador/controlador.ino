@@ -1,0 +1,124 @@
+#include <Servo.h>
+
+int obterAcao(byte comando) {
+  return comando & 0x03;
+}
+
+int obterValor(byte comando, byte valor) {
+  int sinal = comando & 0x04;
+  return (sinal ? -1 : 1) * (int)valor;
+}
+
+void enviarResposta(int acao, bool sucesso, int valor) {
+  byte bytes_resposta[2];
+  int primeiro_byte = 128;
+  
+  switch(acao) {
+    case 0 : primeiro_byte += 0; // Para legibilidade
+      break;
+    case 1 : primeiro_byte += 1;
+      break;
+    case 2 : primeiro_byte += 2;
+      break;
+    case 3 : primeiro_byte += 3;
+      break;
+  }
+
+  if (valor < 0) {
+    primeiro_byte += 4;
+    valor = valor * (-1);
+  }
+
+  if (!sucesso) {
+    primeiro_byte += 8;
+  }
+
+  bytes_resposta[0] = (byte)primeiro_byte;
+  bytes_resposta[1] = (byte)valor;
+
+  Serial.write(bytes_resposta, 2);
+}
+
+void inicializarGuindaste() {
+  
+}
+
+void rotacionarLanca(Servo motor_rotacao, int angulo) {
+  int pos = motor_rotacao.read();
+
+  // Converte ângulo recebido para posição do servo
+  int pos_nova = (angulo + 180) / 2;
+
+  // Valor mínimo
+  if (pos_nova < 0) {
+    pos_nova = 0;
+  }
+
+  // Valor máximo
+  if (pos_nova > 180) {
+    pos_nova = 180;
+  }
+
+  // Define tamanho do passo e intervalo entre eles - velocidade de rotação
+  int passo = 1;
+  int intervalo = 50;
+
+  if (pos > pos_nova) {
+    passo = passo * (-1);
+  }
+
+  int pos_atual = pos;
+
+  while (pos_atual != pos_nova) {
+    pos_atual += passo;
+    motor_rotacao.write(pos_atual); 
+    delay(intervalo);
+  }
+
+  pos = motor_rotacao.read();
+
+  // Converte posição do servo para ângulo atual 
+  int angulo_atual = pos;
+  angulo_atual = angulo_atual * 2 -180;
+
+  enviarResposta(1, true, angulo_atual);
+}
+
+void liberarRetrairCabo() {
+  
+}
+
+void acionarEletroima() {
+  
+}
+
+Servo servo_rotacao;  // Objeto Servo para rotacionar 
+
+void setup() {
+  Serial.begin(9600);
+  servo_rotacao.attach(9);  // Servo conectado ao pino 9
+  servo_rotacao.write(90); // Define posicao inicial do servo
+}
+
+void loop() {
+  if (Serial.available() >= 2) {  
+
+    byte bytes_recebidos[2];
+    Serial.readBytes(bytes_recebidos, 2);
+
+    int acao = obterAcao(bytes_recebidos[0]);
+    int valor = obterValor(bytes_recebidos[0], bytes_recebidos[1]);
+
+    switch(acao) {
+      case 0 : inicializarGuindaste();
+        break;
+      case 1 : rotacionarLanca(servo_rotacao, valor);
+        break;
+      case 2 : liberarRetrairCabo();
+        break;
+      case 3 : acionarEletroima();
+        break;
+    }
+  }
+  delay(100);
+}
