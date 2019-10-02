@@ -88,16 +88,25 @@ void liberarRetrairCabo() {
   
 }
 
-void acionarEletroima() {
-  
+void acionarEletroima(int pino, int estado) {
+  if (estado == 1) {
+    digitalWrite(pino, HIGH);
+  }
+  else {
+    digitalWrite(pino, LOW);
+  }
+
+  enviarResposta(3, true, digitalRead(pino));
 }
 
-Servo servo_rotacao;  // Objeto Servo para rotacionar 
+Servo servo_rotacao;  // Objeto Servo - rotacionar
+const int pino_eletroima =  53; // Pino digital conectado ao eletroímã
 
 void setup() {
   Serial.begin(9600);
   servo_rotacao.attach(9);  // Servo conectado ao pino 9
-  servo_rotacao.write(90); // Define posicao inicial do servo
+  servo_rotacao.write(90);  // Define posicao inicial do servo de rotação
+  pinMode(pino_eletroima, OUTPUT); // Define pino do eletroímã como saída
 }
 
 void loop() {
@@ -116,7 +125,7 @@ void loop() {
         break;
       case 2 : liberarRetrairCabo();
         break;
-      case 3 : acionarEletroima();
+      case 3 : acionarEletroima(pino_eletroima, valor);
         break;
     }
   }
