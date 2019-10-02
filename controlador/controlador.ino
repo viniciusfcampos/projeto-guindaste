@@ -47,6 +47,7 @@ void rotacionarLanca(Servo motor_rotacao, int angulo) {
   int pos = motor_rotacao.read();
 
   // Converte ângulo recebido para posição do servo
+  // ângulo: -180 a 180; posição: 0 a 180
   int pos_nova = (angulo + 180) / 2;
 
   // Valor mínimo
@@ -84,8 +85,46 @@ void rotacionarLanca(Servo motor_rotacao, int angulo) {
   enviarResposta(1, true, angulo_atual);
 }
 
-void liberarRetrairCabo() {
-  
+void liberarRetrairCabo(Servo motor_altura, int altura) {
+  int pos = motor_altura.read();
+
+  // Converte altura recebida para posição do servo
+  // altura: 0 a 100; posição: 0 a 180
+  int pos_nova = altura * 180 / 100;
+
+  // Valor mínimo
+  if (pos_nova < 0) {
+    pos_nova = 0;
+  }
+
+  // Valor máximo
+  if (pos_nova > 180) {
+    pos_nova = 180;
+  }
+
+  // Define tamanho do passo e intervalo entre eles - velocidade de rotação
+  int passo = 1;
+  int intervalo = 50;
+
+  if (pos > pos_nova) {
+    passo = passo * (-1);
+  }
+
+  int pos_atual = pos;
+
+  while (pos_atual != pos_nova) {
+    pos_atual += passo;
+    motor_altura.write(pos_atual); 
+    delay(intervalo);
+  }
+
+  pos = motor_altura.read();
+
+  // Converte posição do servo para altura atual 
+  int altura_atual = pos;
+  altura_atual = altura_atual * 100 / 180;
+
+  enviarResposta(2, true, altura_atual);
 }
 
 void acionarEletroima(int pino, int estado) {
@@ -99,13 +138,18 @@ void acionarEletroima(int pino, int estado) {
   enviarResposta(3, true, digitalRead(pino));
 }
 
-Servo servo_rotacao;  // Objeto Servo - rotacionar
+Servo servo_rotacao, servo_altura;  // Objetos Servo - rotacionar e alterar altura
 const int pino_eletroima =  53; // Pino digital conectado ao eletroímã
 
 void setup() {
   Serial.begin(9600);
+  
   servo_rotacao.attach(9);  // Servo conectado ao pino 9
-  servo_rotacao.write(90);  // Define posicao inicial do servo de rotação
+  servo_rotacao.write(90);  // Define posição inicial do servo de rotação
+  
+  servo_altura.attach(8); // Servo conectado ao pino 8
+  servo_altura.write(90); // Define posição inicial do servo de altura
+  
   pinMode(pino_eletroima, OUTPUT); // Define pino do eletroímã como saída
 }
 
@@ -123,7 +167,7 @@ void loop() {
         break;
       case 1 : rotacionarLanca(servo_rotacao, valor);
         break;
-      case 2 : liberarRetrairCabo();
+      case 2 : liberarRetrairCabo(servo_altura, valor);
         break;
       case 3 : acionarEletroima(pino_eletroima, valor);
         break;
