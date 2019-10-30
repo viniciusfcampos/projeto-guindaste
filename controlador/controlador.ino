@@ -11,7 +11,7 @@ int obterValor(byte comando, byte valor) {
 
 void enviarResposta(int acao, bool sucesso, int valor) {
   byte bytes_resposta[2];
-  int primeiro_byte = 128;
+  int primeiro_byte = 0;
   
   switch(acao) {
     case 0 : primeiro_byte += 0; // Para legibilidade

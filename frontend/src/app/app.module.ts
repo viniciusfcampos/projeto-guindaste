@@ -10,6 +10,9 @@ import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+const config: SocketIoConfig = { url: 'http://localhost:8000', options: {} };
 
 @NgModule({
   imports: [
@@ -21,7 +24,8 @@ import { AppRoutingModule } from './app-routing.module';
     MaterialModule,
     CoreModule,
     SharedModule,
-    AppRoutingModule // must be imported as the last module as it contains the fallback route
+    AppRoutingModule,
+    SocketIoModule.forRoot(config)
   ],
   declarations: [AppComponent],
   providers: [],

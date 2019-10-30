@@ -11,5 +11,10 @@
         <div class="acoes">
             <button (click)="alterarAcionamento()" [color]="acionar ? 'primary' : ''" mat-raised-button>{{ acionar ? 'Desativar' : 'Ativar' }}</button>
         </div>
+        <div>
+            <p>Status rotação: {{statusRotacao}}</p>
+            <p>Status altura: {{statusAltura}}</p>
+            <p>Status Eletroima: {{statusEletroima}}</p>
+        </div>
     </div>
 </div>

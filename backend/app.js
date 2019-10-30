@@ -15,7 +15,8 @@ var formatarResposta = (acao, valor) => {
   const valorAbsoluto = Math.abs(valor);
   const sinal = valor < 0 ? 0x04 : 0x00;
   const byteComando = sinal + acao;
-  return Buffer.from([byteComando, valorAbsoluto])
+  console.log('[Enviado]', byteComando, valorAbsoluto);
+  return Buffer.from([byteComando, valorAbsoluto]);
 };
 
 app.post('/rotacao', (req, res)  => {
@@ -40,4 +41,4 @@ app.listen(8000, ()  => {
   console.log('Servidor rodando na porta 8000.');
 });
 
-serialService.on('data', data => console.log(data.toString()));
+serialService.on('data', data => console.log('[Recebido]', data[0], data[1]));

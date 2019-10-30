@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  HttpClient,
-  HttpParams,
-  HttpRequest,
-  HttpHeaders
-} from '@angular/common/http';
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-root',
@@ -13,24 +8,34 @@ import {
 })
 export class AppComponent implements OnInit {
   public acionar = false;
+  public statusRotacao = false;
+  public statusAltura = false;
+  public statusEletroima = false;
 
   constructor(
-    private http: HttpClient,
+    private socket: Socket
   ) {}
 
   ngOnInit() {
+    this.socket.on('rotacao', (status: boolean) => this.statusRotacao = status);
+    this.socket.on('altura', (status: boolean) => this.statusAltura = status);
+    this.socket.on('eletroima', (status: boolean) => this.statusEletroima = status);
   }
 
   public rotacaoAlterada(valor: number) {
-    this.http.post('rotacao', null, { params: { valor: valor.toString() } }).subscribe();
+    this.enviarMensagem('rotacao', valor);
   }
   
   public alturaAlterada(valor: number) {
-    this.http.post('altura', null, { params: { valor: valor.toString() } }).subscribe();
+    this.enviarMensagem('altura', valor);
   }
   
   public alterarAcionamento() {
     this.acionar = !this.acionar;
-    this.http.post('eletroima', null, { params: { acionar: this.acionar.toString() } }).subscribe();
+    this.enviarMensagem('eletroima', +this.acionar);
+  }
+  
+  private enviarMensagem(comando: string, valor: number){
+    this.socket.emit(comando, valor);
   }
 }
