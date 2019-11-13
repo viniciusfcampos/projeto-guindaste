@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -17,9 +18,18 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.socket.on('rotacao', (status: boolean) => this.statusRotacao = status);
-    this.socket.on('altura', (status: boolean) => this.statusAltura = status);
-    this.socket.on('eletroima', (status: boolean) => this.statusEletroima = status);
+    // this.getMessages().subscribe(x => console.log(x));
+    this.socket.on('rotacao', this.rotacaoRecebida);
+    this.socket.on('altura', this.alturaRecebida);
+    this.socket.on('eletroima', this.acionamentoRecebido);
+  }
+
+  public getMessages = () => {
+    return new Observable((observer) => {
+        this.socket.on('rotacao', (message: any) => {
+            observer.next(message);
+        });
+    });
   }
 
   public rotacaoAlterada(valor: number) {
@@ -37,5 +47,17 @@ export class AppComponent implements OnInit {
   
   private enviarMensagem(comando: string, valor: number){
     this.socket.emit(comando, valor);
+  }
+
+  private rotacaoRecebida(status: any) {
+    console.log('rotacao ', status);
+  }
+
+  private alturaRecebida(status: any) {
+    console.log('altura ', status);
+  }
+
+  private acionamentoRecebido(status: any) {
+    console.log('eletroima ', status);
   }
 }

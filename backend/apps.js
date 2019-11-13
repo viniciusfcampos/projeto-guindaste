@@ -13,6 +13,14 @@ server.listen(8000, () => console.log('server listens on port 8000'));
 const io = require('socket.io')(http);
 io.listen(server);
 
+serialService.on('data', data => {
+  const codigo = data[0] & 0x03;
+  const status = data[1];
+  // const status = data[1] & 0x08;
+  console.log('[Recebido controlador]', obterComando(codigo), status);
+  io.emit(obterComando(codigo), status);
+});
+
 io.on('connection', socket => {
   console.log('Client connected!');
   socket.on('rotacao', data => enviarRespostaControlador(0x01, data));
@@ -28,14 +36,6 @@ const enviarRespostaControlador = (acao, valor) => {
   serialService.write(mensagem);
   console.log('[Enviado controlador]', byteComando, valorAbsoluto);
 };
-
-serialService.on('data', data => {
-  console.log('[Recebido controlador]', data[0], data[1]);
-  const codigo = data[1] & 0x03;
-  const status = data[1] & 0x08;
-  console.log(obterComando(codigo), status);
-  io.emit(obterComando(codigo), status);
-});
 
 const obterComando = (codigo) => {
   switch(codigo) {
