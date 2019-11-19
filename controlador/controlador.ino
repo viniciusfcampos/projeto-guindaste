@@ -1,4 +1,23 @@
-#include <Servo.h>
+#include <Stepper.h>
+
+//** Variáveis globais **
+
+const int passosPorRevolucao = 2038;  // número de passos por revolução
+
+const int velocidade_rotacao = 4;  // velocidade em RPM - Rotação
+const int velocidade_altura = 4; // velocidade em RPM - Altura
+
+// Pin 4 -> In1, Pin6 -> In3, Pin5 -> In2, Pin7 -> In4
+Stepper stepper_rotacao(passosPorRevolucao, 4, 6, 5, 7); // Objeto Stepper - rotacionar lança
+// Pin 8 -> In1, Pin10 -> In3, Pin9 -> In2, Pin11 -> In4
+Stepper stepper_altura(passosPorRevolucao, 8, 10, 9, 11); // Objeto Stepper - alterar altura
+
+const int pino_eletroima =  53; // Pino digital conectado ao eletroímã
+
+int angulo_atual = 0;
+int altura_atual = 100;
+
+//** Variáveis globais FIM **
 
 int obterAcao(byte comando) {
   return comando & 0x03;
@@ -43,115 +62,127 @@ void inicializarGuindaste() {
   
 }
 
-void rotacionarLanca(Servo motor_rotacao, int angulo) {
-  int pos = motor_rotacao.read();
+void rotacionarLanca(Stepper motor_rotacao, int angulo) {
 
-  // Converte ângulo recebido para posição do servo
-  // ângulo: -180 a 180; posição: 0 a 180
-  int pos_nova = (angulo + 180) / 2;
+  int angulo_novo = angulo;
 
   // Valor mínimo
-  if (pos_nova < 0) {
-    pos_nova = 0;
+  if (angulo_novo < -180) {
+    angulo_novo = -180;
   }
 
   // Valor máximo
-  if (pos_nova > 180) {
-    pos_nova = 180;
+  if (angulo_novo > 180) {
+    angulo_novo = 180;
+  }
+  
+  // Define sentido de rotação
+  int sentido = 1; // Sentido horário
+  if (angulo_novo < angulo_atual) {
+    sentido = -1; // Sentido anti-horário
   }
 
-  // Define tamanho do passo e intervalo entre eles - velocidade de rotação
-  int passo = 1;
-  int intervalo = 50;
-
-  if (pos > pos_nova) {
-    passo = passo * (-1);
+  // Define diferença angular entre a posição atual e a nova
+  int delta_angular = 0;
+  if (sentido == 1) {
+    delta_angular = angulo_novo - angulo_atual;
+  }
+  else {
+    delta_angular = angulo_atual - angulo_novo;
   }
 
-  int pos_atual = pos;
+  // Define número de passos
+  int num_passos = ((delta_angular / 360.0) * passosPorRevolucao) * sentido;
 
-  while (pos_atual != pos_nova) {
-    pos_atual += passo;
-    motor_rotacao.write(pos_atual); 
-    delay(intervalo);
+  motor_rotacao.step(num_passos);
+
+  // Atualiza ângulo atual
+  angulo_atual = angulo_novo; // Se tívessemos um sensor de posição usaríamos o valor retornado por ele
+  
+  // Verifica se o ângulo atual é igual ao desejado/recebido
+  bool sucesso = true;
+  if (angulo_atual != angulo) {
+    sucesso = false;
   }
 
-  pos = motor_rotacao.read();
-
-  // Converte posição do servo para ângulo atual 
-  int angulo_atual = pos;
-  angulo_atual = angulo_atual * 2 -180;
-
-  enviarResposta(1, true, angulo_atual);
+  enviarResposta(1, sucesso, angulo_atual);
 }
 
-void liberarRetrairCabo(Servo motor_altura, int altura) {
-  int pos = motor_altura.read();
+void liberarRetrairCabo(Stepper motor_altura, int altura) {
 
-  // Converte altura recebida para posição do servo
-  // altura: 0 a 100; posição: 0 a 180
-  int pos_nova = altura * 180 / 100;
+  int altura_nova = altura;
 
   // Valor mínimo
-  if (pos_nova < 0) {
-    pos_nova = 0;
+  if (altura_nova < 0) {
+    altura_nova = 0;
   }
 
   // Valor máximo
-  if (pos_nova > 180) {
-    pos_nova = 180;
+  if (altura_nova > 100) {
+    altura_nova = 100;
   }
 
-  // Define tamanho do passo e intervalo entre eles - velocidade de rotação
-  int passo = 1;
-  int intervalo = 50;
-
-  if (pos > pos_nova) {
-    passo = passo * (-1);
+  // Define sentido de rotação do motor
+  int sentido = 1; // Sentido horário
+  if (altura_nova < altura_atual) {
+    sentido = -1; // Sentido anti-horário
   }
 
-  int pos_atual = pos;
-
-  while (pos_atual != pos_nova) {
-    pos_atual += passo;
-    motor_altura.write(pos_atual); 
-    delay(intervalo);
+  // Define diferença de altura entre a posição atual e a nova
+  int delta_altura = 0;
+  if (sentido == 1) {
+    delta_altura = altura_nova - altura_atual;
+  }
+  else {
+    delta_altura = altura_atual - altura_nova;
   }
 
-  pos = motor_altura.read();
+  // Define número de passos
+  int num_passos = ((delta_altura / 100.0) * passosPorRevolucao) * sentido; // TODO: Verificar quanto o motor deve girar para um delta de x de altura
 
-  // Converte posição do servo para altura atual 
-  int altura_atual = pos;
-  altura_atual = altura_atual * 100 / 180;
+  motor_altura.step(num_passos);
 
-  enviarResposta(2, true, altura_atual);
+  // Atualiza altura atual
+  altura_atual = altura_nova; // Se tívessemos um sensor de distância usaríamos o valor retornado por ele
+  
+  // Verifica se a altura atual é igual a desejada/recebida
+  bool sucesso = true;
+  if (altura_atual != altura) {
+    sucesso = false;
+  }
+  
+  enviarResposta(2, sucesso, altura_atual);
 }
 
 void acionarEletroima(int pino, int estado) {
+  
   if (estado == 1) {
     digitalWrite(pino, HIGH);
   }
   else {
     digitalWrite(pino, LOW);
   }
+  
+  // Verifica estado
+  bool sucesso = true;
+  int estado_atual = digitalRead(pino);
+  if (estado_atual != estado) {
+    sucesso = false;
+  }
 
-  enviarResposta(3, true, digitalRead(pino));
+  enviarResposta(3, sucesso, estado_atual);
 }
 
-Servo servo_rotacao, servo_altura;  // Objetos Servo - rotacionar e alterar altura
-const int pino_eletroima =  53; // Pino digital conectado ao eletroímã
 
 void setup() {
   Serial.begin(9600);
-  
-  servo_rotacao.attach(9);  // Servo conectado ao pino 9
-  servo_rotacao.write(90);  // Define posição inicial do servo de rotação
-  
-  servo_altura.attach(8); // Servo conectado ao pino 8
-  servo_altura.write(90); // Define posição inicial do servo de altura
+
+  stepper_rotacao.setSpeed(velocidade_rotacao); // Define velocidade do motor de rotação
+  stepper_altura.setSpeed(velocidade_altura); // Define velocidade do motor de altura
   
   pinMode(pino_eletroima, OUTPUT); // Define pino do eletroímã como saída
 }
+
 
 void loop() {
   if (Serial.available() >= 2) {  
@@ -165,9 +196,9 @@ void loop() {
     switch(acao) {
       case 0 : inicializarGuindaste();
         break;
-      case 1 : rotacionarLanca(servo_rotacao, valor);
+      case 1 : rotacionarLanca(stepper_rotacao, valor);
         break;
-      case 2 : liberarRetrairCabo(servo_altura, valor);
+      case 2 : liberarRetrairCabo(stepper_altura, valor);
         break;
       case 3 : acionarEletroima(pino_eletroima, valor);
         break;
