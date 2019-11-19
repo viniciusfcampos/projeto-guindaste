@@ -1,8 +1,8 @@
 <div class="seletor">
     <label>{{label}}</label>
-    <mat-slider [min]="minimo" [max]="maximo" [step]="step" [thumbLabel]="true" [(ngModel)]="value" (change)="valorAlterado()"></mat-slider>
+    <mat-slider [min]="minimo" [max]="maximo" [step]="step" [thumbLabel]="true" [(ngModel)]="value" [disabled]="disabled" (change)="valorAlterado()"></mat-slider>
     <mat-form-field class="valor">
-        <input type="number" [step]="step"  [(ngModel)]="value" (change)="valorAlterado()" [min]="minimo" [max]="maximo" matInput />
+        <input type="number" [step]="step"  [(ngModel)]="value" [disabled]="disabled" (change)="valorAlterado()" [min]="minimo" [max]="maximo" matInput />
         <span matSuffix>{{unidade}}</span>
     </mat-form-field>
 </div>

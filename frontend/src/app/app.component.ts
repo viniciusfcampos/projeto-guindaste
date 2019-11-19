@@ -9,16 +9,18 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent implements OnInit {
   public acionar = false;
-  public statusRotacao = false;
-  public statusAltura = false;
-  public statusEletroima = false;
+  public loading = false;
+  public status = {
+    rotacao: false,
+    altura: false,
+    eletroima: false
+  };
 
   constructor(
     private socket: Socket
   ) {}
 
   ngOnInit() {
-    // this.getMessages().subscribe(x => console.log(x));
     this.socket.on('rotacao', this.rotacaoRecebida);
     this.socket.on('altura', this.alturaRecebida);
     this.socket.on('eletroima', this.acionamentoRecebido);
@@ -33,15 +35,18 @@ export class AppComponent implements OnInit {
   }
 
   public rotacaoAlterada(valor: number) {
+    this.atualizarStatus('rotacao', true);
     this.enviarMensagem('rotacao', valor);
   }
   
   public alturaAlterada(valor: number) {
+    this.atualizarStatus('altura', true);
     this.enviarMensagem('altura', valor);
   }
   
   public alterarAcionamento() {
     this.acionar = !this.acionar;
+    this.atualizarStatus('eletroima', true);
     this.enviarMensagem('eletroima', +this.acionar);
   }
   
@@ -49,15 +54,21 @@ export class AppComponent implements OnInit {
     this.socket.emit(comando, valor);
   }
 
-  private rotacaoRecebida(status: any) {
-    console.log('rotacao ', status);
+  private rotacaoRecebida() {
+    this.atualizarStatus('rotacao', false);
   }
 
-  private alturaRecebida(status: any) {
-    console.log('altura ', status);
+  private alturaRecebida() {
+    this.atualizarStatus('altura', false);
   }
 
-  private acionamentoRecebido(status: any) {
-    console.log('eletroima ', status);
+  private acionamentoRecebido() {
+    this.atualizarStatus('eletroima', false);
+  }
+  
+  private atualizarStatus(propriedade: string, valor: boolean) {
+    console.log('[Status]', propriedade, status);
+    this.status[propriedade] = valor;
+    this.loading = Object.values(this.status).some(s => s);
   }
 }

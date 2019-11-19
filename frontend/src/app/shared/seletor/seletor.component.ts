@@ -7,6 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class SeletorComponent implements OnInit {
   @Input() label: string;
+  @Input() disabled: boolean;
   @Input() minimo: number;
   @Input() maximo: number;
   @Input() unidade = '';
