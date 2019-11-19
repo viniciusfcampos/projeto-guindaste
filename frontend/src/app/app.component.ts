@@ -21,9 +21,9 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.socket.on('rotacao', this.rotacaoRecebida);
-    this.socket.on('altura', this.alturaRecebida);
-    this.socket.on('eletroima', this.acionamentoRecebido);
+    this.socket.on('rotacao', (status: any) => (this.rotacaoRecebida(status)));
+    this.socket.on('altura', (status: any) => (this.alturaRecebida(status)));
+    this.socket.on('eletroima', (status: any) => (this.acionamentoRecebido(status)));
   }
 
   public getMessages = () => {
@@ -54,20 +54,20 @@ export class AppComponent implements OnInit {
     this.socket.emit(comando, valor);
   }
 
-  private rotacaoRecebida() {
-    this.atualizarStatus('rotacao', false);
+  private rotacaoRecebida(status: any) {
+    this.atualizarStatus('rotacao', false, status);
   }
 
-  private alturaRecebida() {
-    this.atualizarStatus('altura', false);
+  private alturaRecebida(status: any) {
+    this.atualizarStatus('altura', false, status);
   }
 
-  private acionamentoRecebido() {
-    this.atualizarStatus('eletroima', false);
+  private acionamentoRecebido(status: any) {
+    this.atualizarStatus('eletroima', false, status);
   }
   
-  private atualizarStatus(propriedade: string, valor: boolean) {
-    console.log('[Status]', propriedade, status);
+  private atualizarStatus(propriedade: string, valor: boolean, retorno: any = null) {
+    console.log('[Status]', propriedade, valor, retorno);
     this.status[propriedade] = valor;
     this.loading = Object.values(this.status).some(s => s);
   }
