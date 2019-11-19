@@ -155,14 +155,22 @@ void liberarRetrairCabo(Stepper motor_altura, int altura) {
 }
 
 void acionarEletroima(int pino, int estado) {
+  
   if (estado == 1) {
     digitalWrite(pino, HIGH);
   }
   else {
     digitalWrite(pino, LOW);
   }
+  
+  // Verifica estado
+  bool sucesso = true;
+  int estado_atual = digitalRead(pino);
+  if (estado_atual != estado) {
+    sucesso = false;
+  }
 
-  enviarResposta(3, true, digitalRead(pino));
+  enviarResposta(3, sucesso, estado_atual);
 }
 
 
