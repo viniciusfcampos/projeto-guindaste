@@ -1,4 +1,5 @@
 #include <Stepper.h>
+#include <EEPROM.h>
 
 //** Variáveis globais **
 
@@ -16,6 +17,9 @@ const int pino_eletroima =  53; // Pino digital conectado ao eletroímã
 
 int angulo_atual = 0;
 int altura_atual = 100;
+
+const int endereco_angulo = 0;
+const int endereco_altura = 1;
 
 //** Variáveis globais FIM **
 
@@ -59,7 +63,11 @@ void enviarResposta(int acao, bool sucesso, int valor) {
 }
 
 void inicializarGuindaste() {
-  
+  // Obtém os valores de ângulo e altura salvos na memória
+  angulo_atual = (int)EEPROM.read(endereco_angulo);
+  enviarResposta(1, true, angulo_atual);
+  altura_atual = (int)EEPROM.read(endereco_altura);
+  enviarResposta(2, true, altura_atual);
 }
 
 void rotacionarLanca(Stepper motor_rotacao, int angulo) {
@@ -98,6 +106,9 @@ void rotacionarLanca(Stepper motor_rotacao, int angulo) {
 
   // Atualiza ângulo atual
   angulo_atual = angulo_novo; // Se tívessemos um sensor de posição usaríamos o valor retornado por ele
+
+  // Salva na memória
+  EEPROM.update(endereco_angulo, (byte)angulo_atual);
   
   // Verifica se o ângulo atual é igual ao desejado/recebido
   bool sucesso = true;
@@ -144,6 +155,9 @@ void liberarRetrairCabo(Stepper motor_altura, int altura) {
 
   // Atualiza altura atual
   altura_atual = altura_nova; // Se tívessemos um sensor de distância usaríamos o valor retornado por ele
+
+  // Salva na memória
+  EEPROM.update(endereco_altura, (byte)altura_atual);
   
   // Verifica se a altura atual é igual a desejada/recebida
   bool sucesso = true;
