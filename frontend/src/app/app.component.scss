@@ -14,10 +14,13 @@
   .controle {
     box-shadow: 10px 6px 60px -4px rgba(0,0,0,0.75);
     background-color: rgba(0, 0, 0, 0.6);
+    flex-direction: column;
     border-radius: 16px;
     position: relative;
+    display: flex;
     color: #fff;
     padding: 40px;
+    height: 570px;
     width: 400px;
 
     header {
@@ -32,6 +35,24 @@
         margin-bottom: 48px;
         font-weight: bold;
         font-size: 24px;
+      }
+    }
+
+    .inicializar {
+      flex-direction: column;
+      align-items: center;
+      display: flex;
+      flex: 1;
+      
+      p {
+        font-size: .8em;
+        font-weight: 500;
+        margin: 32px 0;
+      }
+
+      .play {
+        margin: 0 auto;
+        display: block;
       }
     }
 

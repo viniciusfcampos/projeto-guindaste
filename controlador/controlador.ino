@@ -5,8 +5,8 @@
 
 const int passosPorRevolucao = 2038;  // número de passos por revolução
 
-const int velocidade_rotacao = 4;  // velocidade em RPM - Rotação
-const int velocidade_altura = 4; // velocidade em RPM - Altura
+const int velocidade_rotacao = 8;  // velocidade em RPM - Rotação
+const int velocidade_altura = 8; // velocidade em RPM - Altura
 
 // Pin 4 -> In1, Pin6 -> In3, Pin5 -> In2, Pin7 -> In4
 Stepper stepper_rotacao(passosPorRevolucao, 4, 6, 5, 7); // Objeto Stepper - rotacionar lança
@@ -66,6 +66,7 @@ void inicializarGuindaste() {
   // Obtém os valores de ângulo e altura salvos na memória
   angulo_atual = (int)EEPROM.read(endereco_angulo);
   enviarResposta(1, true, angulo_atual);
+  delay(100);
   altura_atual = (int)EEPROM.read(endereco_altura);
   enviarResposta(2, true, altura_atual);
 }

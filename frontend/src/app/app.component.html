@@ -4,13 +4,23 @@
             <h1>Projeto <span>Guindaste</span></h1>
             <img src="./../assets/img/crane.png">
         </header>
-        <div class="seletores">
-            <app-seletor label="Rotação" [minimo]="-180" [maximo]="180" [step]="2" unidade="º" (aoAlterarValor)="rotacaoAlterada($event)" [disabled]="loading"></app-seletor>
-            <app-seletor label="Altura" [minimo]="0" [maximo]="100" unidade="%" (aoAlterarValor)="alturaAlterada($event)" [disabled]="loading"></app-seletor>
-        </div>
-        <div class="acoes">
-            <button (click)="alterarAcionamento()" [disabled]="loading" [color]="acionar ? 'primary' : ''" mat-raised-button>{{ acionar ? 'Desativar' : 'Ativar' }} imã</button>
-        </div>
+        <ng-container *ngIf="inicializado">
+            <div class="seletores">
+                <app-seletor label="Rotação" [valor]="valores.rotacao" [minimo]="-180" [maximo]="180" [step]="2" unidade="º" (aoAlterarValor)="rotacaoAlterada($event)" [disabled]="loading"></app-seletor>
+                <app-seletor label="Altura" [valor]="valores.altura" [minimo]="0" [maximo]="100" unidade="%" (aoAlterarValor)="alturaAlterada($event)" [disabled]="loading"></app-seletor>
+            </div>
+            <div class="acoes">
+                <button (click)="alterarAcionamento()" [disabled]="loading" [color]="acionar ? 'primary' : ''" mat-raised-button>{{ acionar ? 'Desativar' : 'Ativar' }} imã</button>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!inicializado">
+            <div class="inicializar">
+                <p>Inicializar o guindaste</p>
+                <button  class="play" (click)="inicializarComunicacao()" mat-fab>
+                    <mat-icon>play_arrow</mat-icon>
+                </button>
+            </div>
+        </ng-container>
         <app-loader [isLoading]="loading"></app-loader>
     </div>
 </div>

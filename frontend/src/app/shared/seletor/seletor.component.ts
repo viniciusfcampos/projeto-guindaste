@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChange, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-seletor',
   templateUrl: './seletor.component.html',
   styleUrls: ['./seletor.component.scss']
 })
-export class SeletorComponent implements OnInit {
+export class SeletorComponent implements OnInit, OnChanges {
+  @Input() valor: number;
   @Input() label: string;
   @Input() disabled: boolean;
   @Input() minimo: number;
@@ -18,6 +19,12 @@ export class SeletorComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+  }
+
+  ngOnChanges(changes: any) {
+    if (changes['valor']) {
+      this.value = this.valor;
+    }
   }
 
   public valorAlterado() {

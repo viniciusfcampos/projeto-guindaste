@@ -10,10 +10,15 @@ import { Observable } from 'rxjs';
 export class AppComponent implements OnInit {
   public acionar = false;
   public loading = false;
+  public inicializado = false;
   public status = {
     rotacao: false,
     altura: false,
     eletroima: false
+  };
+  public valores = {
+    rotacao: 0,
+    altura: 0,
   };
 
   constructor(
@@ -34,6 +39,11 @@ export class AppComponent implements OnInit {
     });
   }
 
+  public inicializarComunicacao() {
+    this.enviarMensagem('iniciar');
+    this.loading = true;
+  }
+
   public rotacaoAlterada(valor: number) {
     this.atualizarStatus('rotacao', true);
     this.enviarMensagem('rotacao', valor);
@@ -50,20 +60,27 @@ export class AppComponent implements OnInit {
     this.enviarMensagem('eletroima', +this.acionar);
   }
   
-  private enviarMensagem(comando: string, valor: number){
+  private enviarMensagem(comando: string, valor: number = null){
     this.socket.emit(comando, valor);
   }
 
-  private rotacaoRecebida(status: any) {
-    this.atualizarStatus('rotacao', false, status);
+  private rotacaoRecebida(valor: number) {
+    this.inicializarValor('rotacao', valor);
+    this.atualizarStatus('rotacao', false, valor);
   }
 
-  private alturaRecebida(status: any) {
-    this.atualizarStatus('altura', false, status);
+  private alturaRecebida(valor: number) {
+    this.inicializarValor('altura', valor);
+    this.atualizarStatus('altura', false, valor);
   }
 
-  private acionamentoRecebido(status: any) {
-    this.atualizarStatus('eletroima', false, status);
+  private acionamentoRecebido(valor: number) {
+    this.atualizarStatus('eletroima', false, valor);
+  }
+
+  private inicializarValor(propriedade: string, valor: number) {
+    this.valores[propriedade] = valor;
+    this.inicializado = true;
   }
   
   private atualizarStatus(propriedade: string, valor: boolean, retorno: any = null) {
