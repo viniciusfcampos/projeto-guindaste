@@ -5,8 +5,8 @@
 
 const int passosPorRevolucao = 2038;  // número de passos por revolução
 
-const int velocidade_rotacao = 8;  // velocidade em RPM - Rotação
-const int velocidade_altura = 8; // velocidade em RPM - Altura
+const int velocidade_rotacao = 4;  // velocidade em RPM - Rotação
+const int velocidade_altura = 4; // velocidade em RPM - Altura
 
 // Pin 4 -> In1, Pin6 -> In3, Pin5 -> In2, Pin7 -> In4
 Stepper stepper_rotacao(passosPorRevolucao, 4, 6, 5, 7); // Objeto Stepper - rotacionar lança
@@ -19,7 +19,8 @@ int angulo_atual = 0;
 int altura_atual = 100;
 
 const int endereco_angulo = 0;
-const int endereco_altura = 1;
+const int endereco_sinal_angulo = 5;
+const int endereco_altura = 10;
 
 //** Variáveis globais FIM **
 
@@ -30,6 +31,36 @@ int obterAcao(byte comando) {
 int obterValor(byte comando, byte valor) {
   int sinal = comando & 0x04;
   return (sinal ? -1 : 1) * (int)valor;
+}
+
+void salvarAngulo(int valor) {
+  int sinal = 0;
+  if (valor < 0) {
+    sinal = 1;
+  }
+
+  EEPROM.update(endereco_angulo, abs(valor));
+  EEPROM.update(endereco_sinal_angulo, sinal);
+}
+
+int obterAngulo() {
+  int valor = (int)EEPROM.read(endereco_angulo);
+  int sinal = (int)EEPROM.read(endereco_sinal_angulo);
+  
+  if (sinal == 1) {
+    valor = valor * (-1);
+  }
+  
+  return valor;
+}
+
+void salvarAltura(int valor) {
+  EEPROM.update(endereco_altura, valor);
+}
+
+int obterAltura() {
+  int valor = (int)EEPROM.read(endereco_altura);
+  return valor;
 }
 
 void enviarResposta(int acao, bool sucesso, int valor) {
@@ -64,10 +95,12 @@ void enviarResposta(int acao, bool sucesso, int valor) {
 
 void inicializarGuindaste() {
   // Obtém os valores de ângulo e altura salvos na memória
-  angulo_atual = (int)EEPROM.read(endereco_angulo);
+  angulo_atual = obterAngulo();
   enviarResposta(1, true, angulo_atual);
+  
   delay(100);
-  altura_atual = (int)EEPROM.read(endereco_altura);
+  
+  altura_atual = obterAltura();
   enviarResposta(2, true, altura_atual);
 }
 
@@ -109,7 +142,7 @@ void rotacionarLanca(Stepper motor_rotacao, int angulo) {
   angulo_atual = angulo_novo; // Se tívessemos um sensor de posição usaríamos o valor retornado por ele
 
   // Salva na memória
-  EEPROM.update(endereco_angulo, (byte)angulo_atual);
+  salvarAngulo(angulo_atual);
   
   // Verifica se o ângulo atual é igual ao desejado/recebido
   bool sucesso = true;
@@ -158,7 +191,7 @@ void liberarRetrairCabo(Stepper motor_altura, int altura) {
   altura_atual = altura_nova; // Se tívessemos um sensor de distância usaríamos o valor retornado por ele
 
   // Salva na memória
-  EEPROM.update(endereco_altura, (byte)altura_atual);
+  salvarAltura(altura_atual);
   
   // Verifica se a altura atual é igual a desejada/recebida
   bool sucesso = true;
