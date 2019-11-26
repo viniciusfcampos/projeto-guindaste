@@ -14,7 +14,8 @@ body {
   flex-direction: column;
   margin: 0;
   height: 100%;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
 }
 
 .mat-slider {
@@ -23,7 +24,7 @@ body {
   &.cdk-focused .mat-slider-track-background {
     background-color: rgba(255, 255, 255, 0.2);
   }
-  
+
   &.cdk-focused .mat-slider-thumb,
   .mat-slider-thumb,
   .mat-slider-min-value.mat-slider-thumb-label-showing.cdk-focused .mat-slider-thumb,
@@ -41,10 +42,14 @@ body {
   }
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .mat-input-element:disabled {

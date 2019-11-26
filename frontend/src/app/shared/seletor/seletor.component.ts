@@ -15,11 +15,10 @@ export class SeletorComponent implements OnInit, OnChanges {
   @Input() step = 1;
   @Output() aoAlterarValor = new EventEmitter<number>();
   public value = 0;
-  
-  constructor() { }
 
-  ngOnInit() {
-  }
+  constructor() {}
+
+  ngOnInit() {}
 
   ngOnChanges(changes: any) {
     if (changes['valor']) {
@@ -28,14 +27,14 @@ export class SeletorComponent implements OnInit, OnChanges {
   }
 
   public valorAlterado() {
-    let valor = this.value
+    let valor = this.value;
 
     if (valor > this.maximo) {
-      valor = this.maximo
+      valor = this.maximo;
     } else if (valor < this.minimo) {
       valor = this.minimo;
     }
-    
+
     this.value = valor ? +valor.toFixed(0) : valor;
     this.aoAlterarValor.emit(this.value);
   }

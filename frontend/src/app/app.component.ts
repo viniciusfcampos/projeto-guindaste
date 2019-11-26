@@ -18,26 +18,24 @@ export class AppComponent implements OnInit {
   };
   public valores = {
     rotacao: 0,
-    altura: 0,
+    altura: 0
   };
 
-  constructor(
-    private socket: Socket
-  ) {}
+  constructor(private socket: Socket) {}
 
   ngOnInit() {
-    this.socket.on('rotacao', (status: any) => (this.rotacaoRecebida(status)));
-    this.socket.on('altura', (status: any) => (this.alturaRecebida(status)));
-    this.socket.on('eletroima', (status: any) => (this.acionamentoRecebido(status)));
+    this.socket.on('rotacao', (status: any) => this.rotacaoRecebida(status));
+    this.socket.on('altura', (status: any) => this.alturaRecebida(status));
+    this.socket.on('eletroima', (status: any) => this.acionamentoRecebido(status));
   }
 
   public getMessages = () => {
-    return new Observable((observer) => {
-        this.socket.on('rotacao', (message: any) => {
-            observer.next(message);
-        });
+    return new Observable(observer => {
+      this.socket.on('rotacao', (message: any) => {
+        observer.next(message);
+      });
     });
-  }
+  };
 
   public inicializarComunicacao() {
     this.enviarMensagem('iniciar');
@@ -48,19 +46,19 @@ export class AppComponent implements OnInit {
     this.atualizarStatus('rotacao', true);
     this.enviarMensagem('rotacao', valor);
   }
-  
+
   public alturaAlterada(valor: number) {
     this.atualizarStatus('altura', true);
     this.enviarMensagem('altura', valor);
   }
-  
+
   public alterarAcionamento() {
     this.acionar = !this.acionar;
     this.atualizarStatus('eletroima', true);
     this.enviarMensagem('eletroima', +this.acionar);
   }
-  
-  private enviarMensagem(comando: string, valor: number = null){
+
+  private enviarMensagem(comando: string, valor: number = null) {
     this.socket.emit(comando, valor);
   }
 
@@ -82,7 +80,7 @@ export class AppComponent implements OnInit {
     this.valores[propriedade] = valor;
     this.inicializado = true;
   }
-  
+
   private atualizarStatus(propriedade: string, valor: boolean, retorno: any = null) {
     console.log('[Status]', propriedade, valor, retorno);
     this.status[propriedade] = valor;

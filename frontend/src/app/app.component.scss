@@ -12,7 +12,7 @@
   width: 100vw;
 
   .controle {
-    box-shadow: 10px 6px 60px -4px rgba(0,0,0,0.75);
+    box-shadow: 10px 6px 60px -4px rgba(0, 0, 0, 0.75);
     background-color: rgba(0, 0, 0, 0.45);
     flex-direction: column;
     border-radius: 16px;
@@ -44,9 +44,9 @@
       align-items: center;
       display: flex;
       flex: 1;
-      
+
       p {
-        font-size: .8em;
+        font-size: 0.8em;
         font-weight: 500;
         margin: 32px 0;
       }
@@ -65,7 +65,7 @@
       text-align: center;
 
       button {
-        width: 120px;
+        width: 140px;
       }
     }
   }
