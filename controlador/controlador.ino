@@ -6,7 +6,7 @@
 const int passosPorRevolucao = 2038;  // número de passos por revolução
 
 const int velocidade_rotacao = 4;  // velocidade em RPM - Rotação
-const int velocidade_altura = 20; // velocidade em RPM - Altura
+const int velocidade_altura = 12; // velocidade em RPM - Altura
 
 // Pin 4 -> In1, Pin6 -> In3, Pin5 -> In2, Pin7 -> In4
 Stepper stepper_rotacao(passosPorRevolucao, 4, 6, 5, 7); // Objeto Stepper - rotacionar lança
@@ -183,7 +183,7 @@ void liberarRetrairCabo(Stepper motor_altura, int altura) {
   }
 
   // Define número de passos
-  int num_passos = ((delta_altura / 3.8) * passosPorRevolucao) * sentido; // TODO: Verificar quanto o motor deve girar para um delta de x de altura
+  int num_passos = ((delta_altura / 3.8) * passosPorRevolucao) * sentido;
 
   motor_altura.step(num_passos);
 
